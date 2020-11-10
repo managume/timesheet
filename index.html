@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timesheet</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lily+Script+One&display=swap&text=timesheet" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">    
+    <style>
+        .font-lily{
+            font-family: 'Lily Script One';
+        }
+        .font-sans{
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+<body class="bg-white font-sans flex flex-col h-100 min-h-sreen" x-data="app()">
+    <header class="p-3 bg-red-500 shadow-lg">
+        <h1 class="font-lily text-3xl text-white">timesheet</h1>
+    </header>
+    <main>
+        <div class="py-8 flex container mx-auto">
+            <input  class="p-2 bg-gray-200 text-gray-800 focus:outline-none text-xl" type="time" name="from" id="from" :value="last()">
+            <input  class="p-2 bg-gray-200 text-gray-800 focus:outline-none text-xl" type="time" name="to" id="to" :value="now()">
+            <input  class="p-2 bg-gray-200 text-gray-800 flex-auto focus:outline-none text-xl" type="text" name="subject" id="subject" placeholder="Introduce una tarea">
+            <button :click.prevent="add()" type="submit" class="bg-red-500 hover:bg-red-400 text-white p-2">Añadir</button>
+        </div>
+        <template x-for="item in data">
+            <section class="container mx-auto py-8">
+                <h2 x-text="item.date" class="font-bold text-gray-700 text-xl"></h2>
+                <table class="my-5">
+                <template x-for="entry in item.entries">
+                    <tr>
+                        <td class="p-2 text-xl"><input class="w-6 h-6 align-middle" type="checkbox" name="" id=""></td>
+                        <td class="p-2 text-xl"><span x-text="entry.from"></span></td>
+                        <td class="p-2 text-xl"><span x-text="entry.to"></span></td>
+                        <td class="p-2 text-xl"><span x-text="entry.subject"></span></td>
+                    </tr>    
+                </template>
+                </table>
+            </section>
+        </template>
+    </main>
+    <script>
+        function app(){
+            return {
+                newEntry: {
+                    from: '',
+                    to: '',
+                    subject: ''
+                },
+                data: [],
+                add(){
+                    this.data.forEach(element => {
+                        let now = new Date()
+                        let date = now.getFullYear()+'-'+ (parseInt(now.getMonth())+1) +'-'+ (parseInt(now.getDay())+1)
+                        console.log(element.date,date)
+                        if(element.date == date){
+                            this.element.entries.push({
+                                from: this.newEntry.from,
+                                to: this.newEntry.to,
+                                subject: this.newEntry.subject
+                            })
+                            this.newEntry = {
+                                from: '',
+                                to: '',
+                                subject: ''
+                            }
+                        }
+                    })
+                    return 0
+                },
+                last(){
+                    let val = ''
+                    if(this.data.length == 0){
+                        val = this.now()
+                    }else{
+                        val = this.data[0].entries.slice(-1)[0].from
+                    }
+                    return val
+                },
+                now(){
+                    let now = new Date()
+                    let roundNow = now.getHours()+':'+Math.round( ( now.getMinutes() / 15 ) * 15 )
+                    console.log(roundNow)
+                    return roundNow
+                }
+            }
+        }
+    </script>
+</body>
+</html>
